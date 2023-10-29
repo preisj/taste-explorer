@@ -1,30 +1,31 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as echarts from 'echarts';
-import {getOrderItems} from "../../../api/orderItem/orderItem.service";
-import {getAllOrders} from "../../../api/order/order.service";
-import {getBook} from "../../../api/book/book.service";
-import {getPerson} from "../../../api/person/person.service";
+import {getOrderItems} from '../../api/orderItem/orderItem.service';
+import {getPersonOrders} from '../../api/order/order.service';
+import {getBook} from '../../api/book/book.service'
+import {getPerson} from '../../api/person/person.service'
+import {useAuth} from "../../context/AuthContext";
+import {HeaderTemplate} from "../../templates/HeaderTemplate";
 
-export const SalesReport = () => {
-    const [chartInstance, setChartInstance] = useState<echarts.ECharts | null>(null); // [1
+export const MyOrdersPage = () => {
+    const [chartInstance, setChartInstance] = useState<echarts.ECharts | null>(null);
     const chartRef = useRef<HTMLDivElement>(null);
 
     const height = window.innerHeight * 0.85;
     const width = window.innerWidth * 0.9;
 
+    const { auth } = useAuth();
+
     useEffect(() => {
-        if (chartRef.current) {
+        if (chartRef.current && auth) {
             echarts.dispose(chartRef.current);
             (async () => {
-                const orders = await getAllOrders();
+                const orders = await getPersonOrders(auth.personId);
 
                 const orderItems = await Promise.all(orders.map((order) => getOrderItems(order.id)));
 
-                // Fetching person details for each order
-                const personPromises = orders.map((order) => getPerson(order.personId));
-                const persons = await Promise.all(personPromises);
+                const person = await getPerson(auth.personId);
 
-                // Extracting necessary data from fetched objects
                 const salesData = await Promise.all(orders.map(async (order, index) => {
                     const books = await Promise.all(orderItems[index].map(async (orderItem) => {
                         return await getBook(orderItem.bookId);
@@ -42,7 +43,7 @@ export const SalesReport = () => {
                         date: order.createdAt, // Assuming createdAt represents the date of the order
                         sales: order.totalPrice,
                         books: books,
-                        person: persons[index],
+                        person: person,
                         bookQuantity: bookQuantity,
                     };
                 }));
@@ -52,7 +53,6 @@ export const SalesReport = () => {
                     value: [data.date, data.sales, data.books, data.person, data.bookQuantity],
                 })));
 
-
                 // ECharts options
                 const options = {
                     tooltip: {
@@ -60,7 +60,6 @@ export const SalesReport = () => {
                         formatter: (params: { data: any; }[]) => {
                             const data = params[0].data;
 
-                            // Extracting data from the object
                             const date = new Date(data.name).toLocaleString();
                             const person = data.value[3];
                             const books = data.value[2];
@@ -180,18 +179,21 @@ export const SalesReport = () => {
         }
     };
 
+
     return (
-        <div>
-            <div className="flex justify-center">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={exportToPNG}>Export to PNG
-                </button>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4"
-                        onClick={exportToCSV}>Export to CSV
-                </button>
+        <HeaderTemplate>
+            <div>
+                <div className="flex justify-center mt-10 mb-5">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            onClick={exportToPNG}>Export to PNG
+                    </button>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-5"
+                            onClick={exportToCSV}>Export to CSV
+                    </button>
+                </div>
+                <div ref={chartRef} style={{width: width, height: height}}/>
             </div>
-            <div ref={chartRef} style={{width: width, height: height}}/>
-        </div>
+        </HeaderTemplate>
     );
 };
-export default SalesReport;
+export default MyOrdersPage;

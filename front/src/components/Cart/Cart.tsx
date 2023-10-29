@@ -22,10 +22,12 @@ import {X} from "phosphor-react";
 import {completeOrder, createOrder} from "../../api/order/order.service";
 import {addOrderItem} from "../../api/orderItem/orderItem.service";
 import {OrderInterface} from "../../interfaces/OrderInterface";
+import {Link, useNavigate} from "react-router-dom";
 
 export function Cart({ isOpen, onClose }: { isOpen: boolean; onClose: any }) {
     const { auth } = useAuth();
     const toast = useToast();
+    const navigate = useNavigate();
 
     const [cart, setCart] = useState<CartInterface[]>([]);
     const [books, setBooks] = useState<Book[]>([]);
@@ -115,25 +117,10 @@ export function Cart({ isOpen, onClose }: { isOpen: boolean; onClose: any }) {
                 orderItems.map((orderItem) => addOrderItem(orderItem.orderId, orderItem.bookId, orderItem.quantity, orderItem.price))
             );
 
-            await completeOrder(createdOrder.id);
-
-            setCart([]);
-
-            const personCart = await getPersonCart(auth.personId);
-
-            personCart.map((cartItem) => console.log(cartItem))
-
-            await clearCart(auth.personId);
-
-            toast({
-                title: "Order completed.",
-                description: "Your order has been completed.",
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-            });
 
             onClose();
+
+            navigate('/completeOrder',{state: { order: createdOrder, orderItems: orderItems, auth: auth }});
         } catch (e) {
             toast({
                 title: "Error",

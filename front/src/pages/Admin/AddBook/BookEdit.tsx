@@ -6,9 +6,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { editBook, getBook } from "../../../api/book/book.service";
+import {editBook, getBook} from "../../../api/book/book.service";
 import { HeaderTemplate } from "../../../templates/HeaderTemplate";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 
 const editBookSchema = z.object({
   title: z.string().min(3),
@@ -24,6 +24,8 @@ export function BookEdit() {
     resolver: zodResolver(editBookSchema),
   });
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
   const navigate = useNavigate();
   const toast = useToast();
   const params = useParams();
@@ -33,7 +35,7 @@ export function BookEdit() {
       await editBook({
         ...values,
         id: params.id,
-      });
+      }, imageFile)
 
       toast({
         description: "Book successfully edited.",
@@ -45,7 +47,7 @@ export function BookEdit() {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         toast({
-          description: "User edit error",
+          description: "Book edit error",
           status: "error",
           duration: 4000,
           isClosable: true,
@@ -89,7 +91,9 @@ export function BookEdit() {
                       {...register("author")}
                   />
                 </div>
+              </div>
 
+              <div className="grid grid-cols-2 grid-flow-row gap-14">
                 <div className="mt-3">
                   <label>Description *</label>
                   <input
@@ -97,18 +101,6 @@ export function BookEdit() {
                       placeholder="Description"
                       className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
                       {...register("description")}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 grid-flow-row gap-14">
-                <div className="mt-3">
-                  <label>Price *</label>
-                  <input
-                      type="number"
-                      placeholder="Price"
-                      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
-                      {...register("price")}
                   />
                 </div>
 
@@ -124,6 +116,28 @@ export function BookEdit() {
                     <option value="Sci-fi">Sci-fi</option>
                     <option value="Romance">Romance</option>
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 grid-flow-row gap-14">
+                <div className="mt-3">
+                  <label>Price *</label>
+                  <input
+                      type="number"
+                      placeholder="Price"
+                      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
+                      {...register("price")}
+                  />
+                </div>
+
+                <div className="mt-3">
+                    <label>Image *</label>
+                    <input
+                        type="file"
+                        placeholder="Image"
+                        className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
+                        onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                    />
                 </div>
               </div>
               <div className="w-full flex justify-between items-center">

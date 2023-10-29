@@ -60,6 +60,25 @@ export const UserList: React.FunctionComponent<UserTableProps> = (props) => {
         doc.save("user-list.pdf");
     };
 
+    const generateCSV = () => {
+        const tableColumn = ["First Name", "Last Name", "Email", "Role", "Phone", "Address", "ID"];
+        const tableRows: (string | number)[][] = [];
+
+        // Add data to tableRows
+        personFilter.forEach((person) => {
+            const userData = [person.firstName, person.lastName, person.email, person.role, person.phone, person.address, person.id];
+            // @ts-ignore
+            tableRows.push(userData);
+        });
+
+        const csvContent = "data:text/csv;charset=utf-8," + tableColumn.join(",") + "\n" + tableRows.map(row => row.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "book-list.csv");
+        document.body.appendChild(link);
+        link.click();
+    };
 
     return (
         <>
@@ -78,6 +97,9 @@ export const UserList: React.FunctionComponent<UserTableProps> = (props) => {
                 />
                 <div>
                     <button onClick={generateReport}>Generate PDF report</button>
+                </div>
+                <div>
+                    <button onClick={generateCSV}>Generate CSV report</button>
                 </div>
                 <div className="flex items-center rounded mb-2 w-full">
                     <MagnifyingGlass

@@ -65,6 +65,25 @@ export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
         doc.save("book-list.pdf");
     };
 
+    const generateCSV = () => {
+        const tableColumn = ["Title", "Author", "Description", "Price", "Type", "ID"];
+        const tableRows: (string | number)[][] = [];
+
+        // Add data to tableRows
+        bookFilter.forEach((book) => {
+            const bookData = [book.title, book.author, book.description, book.price, book.type, book.id];
+            tableRows.push(bookData);
+        });
+
+        const csvContent = "data:text/csv;charset=utf-8," + tableColumn.join(",") + "\n" + tableRows.map(row => row.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "book-list.csv");
+        document.body.appendChild(link);
+        link.click();
+    };
+
     return (
         <>
             <div
@@ -82,6 +101,9 @@ export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
                 />
                 <div>
                     <button onClick={generateReport}>Generate PDF report</button>
+                </div>
+                <div>
+                    <button onClick={generateCSV}>Generate CSV report</button>
                 </div>
                 <div className="flex items-center rounded mb-2 w-full">
                     <MagnifyingGlass

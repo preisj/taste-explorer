@@ -4,6 +4,10 @@ export interface Book {
   description: string,
   price: number;
   type: string;
-  quantity: number;
+  quantity?: number;
+  image?: string;
   id: string;
 }
+
+export type AddBookPayload = Omit<Book, "id" | "image">;
+export type EditBookPayload = Omit<Book, "image">;

@@ -17,6 +17,10 @@ export function updateOrder(order: OrderInterface) {
     return api.put(`/order/${order.id}/update`, order).then((res) => res.data);
 }
 
+export function removeBookFromOrder(orderId: string, bookId: string) {
+    return api.put(`/order/${orderId}/remove/${bookId}`).then((res) => res.data);
+}
+
 export function completeOrder(orderId: string) {
     return api.put(`/order/${orderId}/complete`).then((res) => res.data);
 }

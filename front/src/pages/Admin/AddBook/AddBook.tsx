@@ -2,6 +2,7 @@ import { useToast } from "@chakra-ui/react";
 import { FormEvent, useState } from "react";
 import { api } from "../../../lib/axios";
 import { NormalModal } from "../../../components/Modal/NormalModal";
+import {addBook} from "../../../api/book/book.service";
 
 export function AddBook() {
   const toast = useToast();
@@ -11,25 +12,25 @@ export function AddBook() {
   const [description, setDescription] = useState("");
   const [type, setType] = useState("");
   const [price, setPrice] = useState(0);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   function createNewBook(event: FormEvent) {
     event.preventDefault();
 
-    if (!title || !author || !type || !price || !description) {
+    if (!title || !author || !type || !price || !description || !imageFile) {
       return;
     }
 
-    api.post("books", {
+    addBook({
       title,
       author,
       description,
       type,
-      price,
-    }).then(() => {
+      price
+    }, imageFile).then(() => {
       clearForm();
-      // navigate("/books");
       toast({
         description: "New book created",
         status: "success",
@@ -53,6 +54,7 @@ export function AddBook() {
     setDescription("")
     setType("");
     setPrice(0);
+    setImageFile(null);
   }
 
   return (
@@ -121,6 +123,17 @@ export function AddBook() {
                     className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
                     value={price}
                     onChange={(event) => setPrice(parseFloat(event.target.value))}
+                />
+              </div>
+
+              <div className="mt-3">
+                <label>Image *</label>
+                <input
+                    type="file"
+                    placeholder="Image"
+                    className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
+                    // @ts-ignore
+                    onChange={(event) => setImageFile(event.target.files?.[0])}
                 />
               </div>
             </div>

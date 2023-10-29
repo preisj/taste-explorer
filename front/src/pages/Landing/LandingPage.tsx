@@ -22,7 +22,7 @@ import {Link} from "react-router-dom";
 import { motion } from "framer-motion";
 import {Book} from "../../interfaces/BookInterface";
 import {useToast} from "@chakra-ui/react";
-import {getBooks} from "../../api/book/book.service";
+import {getBooks, getImage} from "../../api/book/book.service";
 import {useAuth} from "../../context/AuthContext";
 import {addToCart} from "../../api/cart/cart.service";
 
@@ -69,16 +69,26 @@ export function LandingPage() {
   }, []);
 
   useEffect(() => {
-    if (books) {
-      const imageLinks = books.map((book) => ({
-        cover: book1,
-        label: book.title,
-        category: book.type,
-        price: book.price,
-        id: book.id,
-      }));
-      setBookImages(imageLinks);
-    }
+    const fetchBookImages = async () => {
+      if (books) {
+        const imageLinks = await Promise.all(
+            books.map(async (book) => {
+              const imageData = await getImage(book.image);
+              const imageUrl = URL.createObjectURL(imageData);
+              return {
+                cover: imageUrl,
+                label: book.title,
+                category: book.type,
+                price: book.price,
+                id: book.id,
+              };
+            })
+        );
+        setBookImages(imageLinks);
+      }
+    };
+
+    fetchBookImages();
   }, [books]);
 
   return (
@@ -110,9 +120,15 @@ export function LandingPage() {
                 Immerse Yourself
               </h5>
             </div>
-            <button className="text-white bg-gray-900 p-2 mt-8 w-[120px] rounded-3xl text-base">
-              Learn More
-            </button>
+
+            <Link to="/about-us">
+              <button
+                  type="button"
+                  className="text-white bg-gray-900 p-2 mt-8 w-[120px] rounded-3xl text-base"
+                >
+                Learn More
+              </button>
+            </Link>
           </div>
 
           <div className="flex items-center w-full justify-center flex-col mt-12">
@@ -129,8 +145,8 @@ export function LandingPage() {
                         className="w-full h-[200px] flex justify-center items-end p-4 cursor-pointer bg-[#f8f8f8] shadow-md shadow-zinc-400 hover:shadow-zinc-500 transition-all"
                         style={{
                           backgroundImage: `url(${book.cover})`,
-                          backgroundSize: "contain",
-                          backgroundPosition: "center center",
+                          backgroundSize: "cover",
+                          backgroundRepeat: "no-repeat",
                         }}
                     >
                       <div className="flex flex-col space-y-1">
@@ -233,12 +249,45 @@ export function LandingPage() {
               <div className="flex flex-col">
                 <strong className="mb-1 text-white">More</strong>
                 <hr />
-                <div className="flex text-white text-sm mt-1">Help</div>
-                <div className="flex text-white text-sm">Contact us</div>
-                <div className="flex text-white text-sm">Payments</div>
-                <div className="flex text-white text-sm">
-                  Exchange and returns
-                </div>
+                <Link to="/find-us">
+                  <button
+                      type="button"
+                      className="flex text-white text-sm mt-1"
+                  >
+                    Find Us
+                  </button>
+                </Link>
+                <button
+                    type="button"
+                    className="flex text-white text-sm"
+                    onClick={() => window.location.href = 'mailto:contact@bookverse.com'}
+                >
+                  Contact us
+                </button>
+                <Link to="/about-us">
+                  <button
+                      type="button"
+                      className="flex text-white text-sm"
+                  >
+                    About Us
+                  </button>
+                </Link>
+                <Link to="/faq">
+                  <button
+                      type="button"
+                      className="flex text-white text-sm"
+                  >
+                    FAQ
+                  </button>
+                </Link>
+                <Link to="/terms-and-conditions">
+                  <button
+                      type="button"
+                      className="flex text-white text-sm"
+                  >
+                    Terms & Conditions
+                  </button>
+                </Link>
               </div>
 
               <div className="flex flex-col items-center">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getBook } from "../../../api/book/book.service";
+import {getBook, getImage} from "../../../api/book/book.service";
 import { HeaderTemplate } from "../../../templates/HeaderTemplate";
 import {ShoppingCart} from "phosphor-react";
 import {useToast} from "@chakra-ui/react";
@@ -11,7 +11,6 @@ export function BookVisualize() {
     const { auth } = useAuth();
 
     const { id } = useParams();
-    const bookCover = "https://via.placeholder.com/150";
     const [book, setBook] = useState({
         id: "",
         title: "",
@@ -19,7 +18,9 @@ export function BookVisualize() {
         author: "",
         price: 0,
         type: "",
+        image: "",
     });
+    const [bookImage, setBookImage] = useState("");
     const toast = useToast();
 
     useEffect(() => {
@@ -29,6 +30,16 @@ export function BookVisualize() {
         });
     }, [id]);
 
+    useEffect(() => {
+        (async () => {
+            if (book) {
+                const imageData = await getImage(book.image);
+                const imageUrl = URL.createObjectURL(imageData);
+                setBookImage(imageUrl);
+            }
+        })();
+    }, [book]);
+
     return (
         <HeaderTemplate>
             <div className="h-full flex flex-col items-center">
@@ -36,7 +47,7 @@ export function BookVisualize() {
                     <div className="w-full md:w-1/3 flex justify-center">
                         <img
                             className="object-contain h-64 w-full"
-                            src={bookCover}
+                            src={bookImage}
                             alt="Book cover"
                         />
                     </div>

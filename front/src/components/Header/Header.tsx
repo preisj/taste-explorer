@@ -10,6 +10,7 @@ import {
   UserCircle,
   House,
   ShoppingCart,
+  Bag
 } from "phosphor-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -46,17 +47,26 @@ export function Header() {
             />
 
             {auth.isAuthenticated && (
-                <Menu>
-                  <MenuButton>
-                    <UserCircle
+                <div>
+                  <Link to="/my-orders">
+                    <Bag
                         size={36}
                         className="my-2 text-white cursor-pointer hover:opacity-80 transition-all rounded-full h-8 w-8"
                     />
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem onClick={() => logout()}>Logout</MenuItem>
-                  </MenuList>
-                </Menu>
+                  </Link>
+
+                  <Menu>
+                    <MenuButton>
+                      <UserCircle
+                          size={36}
+                          className="my-2 text-white cursor-pointer hover:opacity-80 transition-all rounded-full h-8 w-8"
+                      />
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                    </MenuList>
+                  </Menu>
+                </div>
             )}
 
             {!auth.isAuthenticated && (

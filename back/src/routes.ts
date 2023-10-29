@@ -1,8 +1,15 @@
-import { FastifyInstance } from "fastify";
-import { z } from "zod";
-import { prisma } from "./lib/prisma";
+import {FastifyInstance} from "fastify";
+import {z} from "zod";
+import {prisma} from "./lib/prisma";
 import jwt from "jsonwebtoken";
-import { upload } from "./server";
+import * as fs from "fs";
+import { v4 as uuid } from "uuid";
+import mime from "mime-types";
+const pump = util.promisify(pipeline);
+import { pipeline } from "stream";
+import util from "util";
+import fsPromises from "fs/promises";
+import path from "path";
 
 interface LoginData {
   email: string;
@@ -41,27 +48,64 @@ export async function appRoutes(app: FastifyInstance) {
     }
   });
 
-  app.post("/books", async (req) => {
-    const createBook = z.object({
-      title: z.string(),
-      type: z.string(),
-      price: z.number(),
-      author: z.string(),
-      description: z.string(),
-    });
+  app.post("/books", async (req, res) => {
+        const data = await (req as any).file() as any;
 
-    const {title, author, description, type, price} = createBook.parse(req.body);
+        const body = {
+          author: data.fields.author.value,
+          price: data.fields.price.value,
+          description: data.fields.description.value,
+          title: data.fields.title.value,
+          type: data.fields.type.value,
+        };
 
-    await prisma.book.create({
-      data: {
-        title,
-        author,
-        description,
-        price,
-        type,
-      },
-    });
-  });
+        const filename = uuid() + `.` + mime.extension(data.mimetype);
+        await pump(data.file, fs.createWriteStream(`./images/${filename}`));
+
+        const createBook = z.object({
+          author: z.string(),
+          price: z.string(),
+          description: z.string(),
+          title: z.string(),
+          type: z.string(),
+        });
+
+        const { author, price, description, title, type } =
+            createBook.parse(body);
+
+        try {
+          const bookAlreadyExists = await prisma.book.findFirst({
+            where: { title },
+          });
+
+          if (bookAlreadyExists) {
+            return res.status(409).send({ error: "Book already exists" });
+          }
+
+          return await prisma.book.create({
+            data: {
+              author,
+              price: Number(price),
+              description,
+              title,
+              type,
+              image: filename
+            },
+          });
+        } catch (error) {
+          return res
+              .status(500)
+              .send({ error: "Error while creating book" });
+        }
+      }
+  );
+
+  app.get("/file/:image", async (req: any, res) => {
+        const { image } = req.params;
+        const file = await fsPromises.readFile(path.join("images", image));
+        return res.type("image/jpeg").send(file);
+      }
+  );
 
   app.get("/books/all", async (_req, res) => {
     try {
@@ -73,10 +117,8 @@ export async function appRoutes(app: FastifyInstance) {
   });
 
   app.delete("/book/:id/delete", async (req: any, res) => {
-    console.log(req.params)
-
     try {
-      const deletedBook = await prisma.user.delete({
+      const deletedBook = await prisma.book.delete({
         where: {
           id: req.params.id,
         },
@@ -112,29 +154,6 @@ export async function appRoutes(app: FastifyInstance) {
       return res.send(books);
     } catch (error) {
       return res.status(500).send({error: "Error searching books"});
-    }
-  });
-
-  app.put("/book/:id/edit", async (req: any, res) => {
-    try {
-      const updatedPerson = await prisma.user.update({
-        where: {
-          id: req.id,
-        },
-        data: {
-          firstName: req.firstName,
-          lastName: req.lastName,
-          email: req.email,
-          password: req.password,
-          role: req.role,
-          phone: req.phone,
-          address: req.address,
-        },
-      });
-
-      res.send(updatedPerson);
-    } catch (error) {
-      res.status(500).send({error: "Error edit book"});
     }
   });
 
@@ -257,26 +276,65 @@ export async function appRoutes(app: FastifyInstance) {
     }
   });
 
+  interface BookUpdateFields {
+    title: string;
+    author: string;
+    description: string;
+    price: string;
+    type: string;
+    image?: string;
+  }
+
   app.put("/book/:id/update", async (req: any, res) => {
-    const {id} = req.params;
-    const {title, author, description, price, type} = req.body;
+    const data = await (req as any).file() as any;
+
+    const body = {
+      id: data.fields.id.value,
+      author: data.fields.author.value,
+      price: data.fields.price.value,
+      description: data.fields.description.value,
+      title: data.fields.title.value,
+      type: data.fields.type.value,
+    };
 
     try {
-      const updatedBook = await prisma.book.update({
+      const updateFields: BookUpdateFields = {
+        title: body.title,
+        author: body.author,
+        description: body.description,
+        price: body.price,
+        type: body.type,
+      };
+
+      const existingBook = await prisma.book.findUnique({
         where: {
-          id: id,
-        },
-        data: {
-          title: title,
-          author: author,
-          description: description,
-          price: price,
-          type: type,
+          id: body.id,
         },
       });
+
+      if (data) {
+        if (existingBook?.image) {
+          fs.unlinkSync(`./images/${existingBook.image}`);
+        }
+
+        const filename = uuid() + `.` + mime.extension(data.mimetype);
+        await pump(data.file, fs.createWriteStream(`./images/${filename}`));
+        updateFields.image = filename;
+      }
+
+      const updatedBook = await prisma.book.update({
+        where: {
+          id: body.id,
+        },
+        data: {
+          ...updateFields,
+          price: Number(updateFields.price), // Convert price to a number
+        },
+      });
+
       console.log(updatedBook, "updated");
     } catch (error) {
-      res.status(500).send({error: "Error edit book"});
+      res.status(500).send({ error: "Error editing book" });
     }
   });
 
@@ -386,6 +444,8 @@ export async function appRoutes(app: FastifyInstance) {
 
   app.put("/cart/update", async (req: any, response) => {
     const {personId, bookId, quantity} = req.body;
+
+    console.log(personId, bookId, quantity)
 
     const cartBook = await prisma.cart.findFirst({
       where: {
@@ -561,6 +621,23 @@ export async function appRoutes(app: FastifyInstance) {
       return response.send(completedOrder);
     } catch (error) {
       return response.status(500).send({ error: "Error completing order" });
+    }
+  });
+
+  app.put("/order/:orderId/remove/:bookId", async (req, response) => {
+    const { orderId, bookId } = req.params as any;
+
+    try {
+      const deletedOrderItem = await prisma.orderItem.deleteMany({
+        where: {
+          orderId,
+          bookId,
+        },
+      });
+
+      return response.send(deletedOrderItem);
+    } catch (error) {
+      return response.status(500).send({ error: "Error deleting order item" });
     }
   });
 
