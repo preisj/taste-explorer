@@ -12,14 +12,86 @@ datasource db {
 }
 
 model User {
+  id                 String               @id @unique @default(uuid())
+  firstName          String
+  lastName           String
+  email              String               @unique
+  password           String
+  role               String
+  phone              String
+  address            String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  PantryItem         PantryItem[]
+  Recipe             Recipe[]
+  RecipeComment      RecipeComment[]
+  DietaryRestriction DietaryRestriction[]
+}
+
+model Cuisine {
   id        String   @id @unique @default(uuid())
-  firstName String
-  lastName  String
-  email     String   @unique
-  password  String
-  role      String
-  phone     String
-  address   String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  recipes   Recipe[]
+}
+
+model PantryItem {
+  id         String   @id @unique @default(uuid())
+  userId     String
+  name       String
+  expiration DateTime
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Recipe {
+  id            String          @id @unique @default(uuid())
+  title         String
+  description   String
+  instructions  String // Store instructions as JSON-encoded strings
+  userId        String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  user          User            @relation(fields: [userId], references: [id])
+  RecipeComment RecipeComment[]
+  cuisines      Cuisine[]
+}
+
+model Ingredient {
+  id        String   @id @unique @default(uuid())
+  name      String
+  tags      String // Store tags as JSON-encoded strings
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RecipeComment {
+  id        String   @id @unique @default(uuid())
+  userId    String
+  recipeId  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+}
+
+model DietaryRestriction {
+  id              String   @id @unique @default(uuid())
+  userId          String
+  restrictionType String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+model Market {
+  id        String   @id @unique @default(uuid())
+  name      String
+  location  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

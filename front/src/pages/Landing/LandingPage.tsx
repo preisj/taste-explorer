@@ -7,8 +7,22 @@ import romanceCover from "../../assets/romance-cover.jpg";
 import thrillerCover from "../../assets/thriller-cover.jpg";
 import scifiCover from "../../assets/scifi-cover.png";
 import fantasyCover from "../../assets/fantasy-cover.jpg";
-import topCover from "../../assets/landing-page-cover.jpg";
-import book1 from "../../assets/book1.jpg";
+import topCover from "../../assets/landing-page-image.jpg";
+import italianCuisineCover from "../../assets/italianCuisineCover.jpg";
+import chineseCuisineCover from "../../assets/chineseCuisineCover.jpg";
+import mexicanCuisineCover from "../../assets/mexicanCuisineCover.jpg";
+import indianCuisineCover from "../../assets/indianCuisineCover.jpg";
+import japaneseCuisineCover from "../../assets/japaneseCuisineCover.jpg";
+import frenchCuisineCover from "../../assets/frenchCuisineCover.jpg";
+import thaiCuisineCover from "../../assets/thaiCuisineCover.jpg";
+import greekCuisineCover from "../../assets/greekCuisineCover.jpg";
+import spanishCuisineCover from "../../assets/spanishCuisineCover.jpg";
+import brazilianCuisineCover from "../../assets/brazilianCuisineCover.jpg";
+import middleEasternCuisineCover from "../../assets/middleEasternCuisineCover.jpg";
+import vietnameseCuisineCover from "../../assets/vietnameseCuisineCover.jpg";
+import koreanCuisineCover from "../../assets/koreanCuisineCover.jpg";
+import africanCuisineCover from "../../assets/africanCuisineCover.jpg";
+import mediterraneanCuisineCover from "../../assets/mediterraneanCuisineCover.jpg";
 
 import {
   FacebookLogo,
@@ -26,23 +40,67 @@ import {getBooks, getImage} from "../../api/book/book.service";
 import {useAuth} from "../../context/AuthContext";
 import {addToCart} from "../../api/cart/cart.service";
 
-const categoryImages = [
+const cuisineImages = [
   {
-    cover: romanceCover,
-    label: "Romance",
+    cover: italianCuisineCover,
+    label: "Italian",
   },
   {
-    cover: thrillerCover,
-    label: "Thriller",
+    cover: chineseCuisineCover,
+    label: "Chinese",
   },
   {
-    cover: scifiCover,
-    label: "Sci-fi",
+    cover: mexicanCuisineCover,
+    label: "Mexican",
   },
   {
-    cover: fantasyCover,
-    label: "Fantasy",
+    cover: indianCuisineCover,
+    label: "Indian",
   },
+  // {
+  //   cover: japaneseCuisineCover,
+  //   label: "Japanese",
+  // },
+  // {
+  //   cover: frenchCuisineCover,
+  //   label: "French",
+  // },
+  // {
+  //   cover: thaiCuisineCover,
+  //   label: "Thai",
+  // },
+  // {
+  //   cover: greekCuisineCover,
+  //   label: "Greek",
+  // },
+  // {
+  //   cover: spanishCuisineCover,
+  //   label: "Spanish",
+  // },
+  // {
+  //   cover: brazilianCuisineCover,
+  //   label: "Brazilian",
+  // },
+  // {
+  //   cover: middleEasternCuisineCover,
+  //   label: "Middle Eastern",
+  // },
+  // {
+  //   cover: vietnameseCuisineCover,
+  //   label: "Vietnamese",
+  // },
+  // {
+  //   cover: koreanCuisineCover,
+  //   label: "Korean",
+  // },
+  // {
+  //   cover: africanCuisineCover,
+  //   label: "African",
+  // },
+  // {
+  //   cover: mediterraneanCuisineCover,
+  //   label: "Mediterranean",
+  // },
 ];
 
 export function LandingPage() {
@@ -103,17 +161,17 @@ export function LandingPage() {
           <div className="animated-title">
             <div className="text-top">
               <div>
-                <span>BOOK</span>
-                <span>VERSE</span>
+                <span>TASTE</span>
+                <span>EXPLORER</span>
               </div>
             </div>
             <div className="text-bottom">
-              <div>A haven for book lovers</div>
+              <div>Your recipe wonderland</div>
             </div>
           </div>
           <div className="flex items-center w-full justify-center flex-col">
             <strong className="text-gray-500 text-base">
-              From the bestsellers to the classics
+              From culinary delights to family favorites
             </strong>
             <div className="grid place-items-center">
               <h5 className="text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-300">
@@ -207,7 +265,7 @@ export function LandingPage() {
 
           <div className="flex items-center w-full justify-center flex-col mt-8">
             <strong className="text-gray-500 text-base flex items-center">
-              CATEGORIES
+              CUISINES
               <Trophy size={24} className="ml-2" />
             </strong>
           </div>
@@ -217,7 +275,7 @@ export function LandingPage() {
                         drag="x"
                         dragConstraints={{ left: 0, right: carouselWidth }}
             >
-              {categoryImages.map((category) => (
+              {cuisineImages.map((category) => (
                   <motion.div
                       key={category.label}
                       className="w-full h-[500px] rounded flex items-end justify-center p-4 cursor-grab rounded-xl overflow-hidden"
@@ -228,7 +286,7 @@ export function LandingPage() {
                       }}
                   >
                     <Link
-                        to={`/books/${category.label.toLowerCase()}`}
+                        to={`/recipes/${category.label.toLowerCase()}`}
                         className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 focus:border-blue-700"
                     >
                       {category.label}
@@ -241,26 +299,28 @@ export function LandingPage() {
           <div className="w-full h-64 flex justify-center items-center bg-blue-500">
             <div className="w-[65%] justify-between flex p-4">
               <div className="flex flex-col max-w-[295px]">
-                <strong className="mb-1 text-white">About us</strong>
+                <strong className="mb-1 text-white">About Taste Explorer</strong>
                 <hr />
-                <div className="flex text-white text-sm mt-1">Bookverse is a platform for selling books. We offer a wide selection of titles from all genres, and our easy-to-use interface makes it simple to find the books you're looking for.</div>
+                <div className="flex text-white text-sm mt-1">
+                  Taste Explorer is your go-to solution for pantry management and recipe discovery. Our platform is designed to streamline your cooking experience. You can effortlessly organize your pantry, explore delicious recipes, and connect with a vibrant culinary community.
+                </div>
               </div>
 
               <div className="flex flex-col">
                 <strong className="mb-1 text-white">More</strong>
                 <hr />
-                <Link to="/find-us">
+                <Link to="/find-nearby-markets">
                   <button
                       type="button"
                       className="flex text-white text-sm mt-1"
                   >
-                    Find Us
+                    Find Nearby Markets
                   </button>
                 </Link>
                 <button
                     type="button"
                     className="flex text-white text-sm"
-                    onClick={() => window.location.href = 'mailto:contact@bookverse.com'}
+                    onClick={() => window.location.href = 'mailto:contact@tasteexplorer.com'}
                 >
                   Contact us
                 </button>

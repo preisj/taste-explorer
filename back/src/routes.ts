@@ -10,6 +10,7 @@ import { pipeline } from "stream";
 import util from "util";
 import fsPromises from "fs/promises";
 import path from "path";
+import bcrypt from "bcrypt";
 
 interface LoginData {
   email: string;
@@ -18,7 +19,7 @@ interface LoginData {
 
 export async function appRoutes(app: FastifyInstance) {
   app.post("/login", async (req, res) => {
-    const {email, password} = req.body as LoginData;
+    const { email, password } = req.body as LoginData;
 
     const user = await prisma.user.findUnique({
       where: {
@@ -27,25 +28,29 @@ export async function appRoutes(app: FastifyInstance) {
     });
 
     if (!user) {
-      return console.log({error: "User not found"});
+      return res.status(401).send({ error: "User not found" });
     }
 
-    const match = await (password == user.password);
+    if (user.role === 'admin') {
+      if (password !== user.password) {
+        return res.status(401).send({ error: "Invalid credentials" });
+      }
+    } else {
+      const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!match) {
-      return console.log({error: "Invalid credentials"});
+      if (!passwordMatch) {
+        return res.status(401).send({ error: "Invalid credentials" });
+      }
     }
 
-    if (match || user) {
-      let token = jwt.sign({userId: user.id}, "mysecret");
+    const token = jwt.sign({ userId: user.id }, "mysecret");
 
-      return res.send({
-        token: token,
-        email: user.email,
-        name: user.firstName,
-        id: user.id,
-      });
-    }
+    return res.send({
+      token,
+      email: user.email,
+      name: user.firstName,
+      id: user.id,
+    });
   });
 
   app.post("/books", async (req, res) => {
@@ -130,30 +135,45 @@ export async function appRoutes(app: FastifyInstance) {
     }
   });
 
-  app.get("/books/:type", async (req: any, res) => {
+  app.get("/recipes/:type", async (req: any, res) => {
     const {type} = req.params;
 
-    const bookTypes: any = {
-      "sci-fi": "Sci-fi",
-      "fantasy": "Fantasy",
-      "romance": "Romance",
-      "thriller": "Thriller",
-    }
+    const cuisineTypes: any = {
+      "italian": "Italian",
+      "chinese": "Chinese",
+      "mexican": "Mexican",
+      "indian": "Indian",
+      "japanese": "Japanese",
+      "french": "French",
+      "thai": "Thai",
+      "greek": "Greek",
+      "spanish": "Spanish",
+      "brazilian": "Brazilian",
+      "middleEastern": "Middle Eastern",
+      "vietnamese": "Vietnamese",
+      "korean": "Korean",
+      "african": "African",
+      "mediterranean": "Mediterranean",
+    };
 
     try {
-      const books = await prisma.book.findMany({
+      const recipes = await prisma.recipe.findMany({
         where: {
-          type: bookTypes[type],
+          cuisines: {
+            some: {
+              name: cuisineTypes[type],
+            },
+          },
         },
       });
 
-      if (!books) {
-        return console.log({error: "Books not found"});
+      if (!recipes) {
+        return console.log({error: "Recipes not found"});
       }
 
-      return res.send(books);
+      return res.send(recipes);
     } catch (error) {
-      return res.status(500).send({error: "Error searching books"});
+      return res.status(500).send({error: "Error searching recipes"});
     }
   });
 
@@ -200,19 +220,23 @@ export async function appRoutes(app: FastifyInstance) {
 
     try {
       const accountAlreadyExists = await prisma.user.findFirst({
-        where: {email},
+        where: { email },
       });
 
       if (accountAlreadyExists) {
-        return response.status(409).send({error: "E-mail already exists"});
+        return response.status(409).send({ error: "E-mail already exists" });
       }
+
+      // pw hashing
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       const newPerson = await prisma.user.create({
         data: {
           firstName,
           lastName,
           email,
-          password,
+          password: hashedPassword,
           role,
           phone,
           address,
@@ -223,7 +247,7 @@ export async function appRoutes(app: FastifyInstance) {
     } catch (error) {
       return response
           .status(500)
-          .send({error: "Error while creating account"});
+          .send({ error: "Error while creating account" });
     }
   });
 

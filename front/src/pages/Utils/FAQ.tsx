@@ -6,35 +6,32 @@ export function FAQ() {
             <div className="container mx-auto px-4 py-8">
                 <h1 className="text-3xl font-bold mb-4">Frequently Asked Questions</h1>
                 <div className="mb-8">
-                    <h2 className="text-xl font-bold mb-4">How can I place an order?</h2>
+                    <h2 className="text-xl font-bold mb-4">How does the pantry and recipe management app work?</h2>
                     <p>
-                        Placing an order is simple! Just follow these steps:
+                        Our app simplifies your food organization and meal creation process. Here's how it works:
                     </p>
                     <ol className="list-decimal pl-6 mt-2 mb-4">
-                        <li>Browse our collection and click on a book to view its details.</li>
-                        <li>Find a desired book and click "Add to Cart".</li>
-                        <li>Review the items in your cart and proceed to checkout.</li>
-                        <li>Provide your shipping address and payment information.</li>
-                        <li>Confirm your order, and you're done! We'll take care of the rest.</li>
+                        <li>Add products to your pantry, including their name, expiration date, and quantity.</li>
+                        <li>Receive notifications when your pantry items are running low.</li>
+                        <li>Explore a wide range of recipes based on the ingredients available in your pantry.</li>
+                        <li>Customize your profile with dietary restrictions and personal preferences for personalized recipe recommendations.</li>
+                        <li>Join our recipe sharing community to post your culinary creations and discover new ideas.</li>
+                        <li>Use Google Maps integration to find nearby markets and get daily dish suggestions.</li>
                     </ol>
                 </div>
                 <div className="mb-8">
-                    <h2 className="text-xl font-bold mb-4">What payment methods do you accept?</h2>
+                    <h2 className="text-xl font-bold mb-4">What features are available in the app?</h2>
                     <p>
-                        We accept major credit cards, including Visa, Mastercard, and American Express. You can also use popular payment platforms like PayPal for a secure and convenient checkout experience.
+                        Our app offers the following features:
                     </p>
-                </div>
-                <div className="mb-8">
-                    <h2 className="text-xl font-bold mb-4">How long does delivery take?</h2>
-                    <p>
-                        Delivery times may vary based on your location and the availability of the book. Generally, we aim to deliver within 3-5 business days for physical copies. For eBooks, you can instantly download them after completing your purchase.
-                    </p>
-                </div>
-                <div className="mb-8">
-                    <h2 className="text-xl font-bold mb-4">What if I receive a damaged book or have other issues with my order?</h2>
-                    <p>
-                        We take pride in the quality of our products and services. If you receive a damaged book or have any issues with your order, please contact our customer support team within 7 days of receiving your package. We'll gladly assist you and provide a suitable solution.
-                    </p>
+                    <ul className="list-disc pl-6 mt-2 mb-4">
+                        <li>Pantry management with notifications for low-stock items.</li>
+                        <li>Recipe suggestions based on your pantry ingredients.</li>
+                        <li>Customizable user profiles with dietary restrictions and preferences.</li>
+                        <li>A recipe sharing community to post and discover new recipes.</li>
+                        <li>Integration with Google Maps to find nearby markets.</li>
+                        <li>Daily dish suggestions for your culinary adventures.</li>
+                    </ul>
                 </div>
             </div>
         </HeaderTemplate>

@@ -6,22 +6,23 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {editBook, getBook} from "../../../api/book/book.service";
+import {editRecipe, getRecipe} from "../../../api/recipe/recipe.service";
 import { HeaderTemplate } from "../../../templates/HeaderTemplate";
 import {useEffect, useState} from "react";
 
-const editBookSchema = z.object({
+const editRecipeSchema = z.object({
   title: z.string().min(3),
-  author: z.string().min(3),
+  // author: z.string().min(3),
   description: z.string().min(3),
-  price: z.number().min(0),
-  type: z.string().min(3),
+  instructions: z.string().min(3),
+  // price: z.number().min(0),
+  // type: z.string().min(3),
 });
 
-export function BookEdit() {
+export function RecipeEdit() {
   const { handleSubmit, register, setValue } = useForm({
     shouldUseNativeValidation: true,
-    resolver: zodResolver(editBookSchema),
+    resolver: zodResolver(editRecipeSchema),
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -32,13 +33,13 @@ export function BookEdit() {
 
   async function onEdit(values: any) {
     try {
-      await editBook({
+      await editRecipe({
         ...values,
         id: params.id,
       }, imageFile)
 
       toast({
-        description: "Book successfully edited.",
+        description: "Recipe successfully edited.",
         status: "success",
         duration: 4000,
         isClosable: true,
@@ -47,7 +48,7 @@ export function BookEdit() {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         toast({
-          description: "Book edit error",
+          description: "Recipe edit error",
           status: "error",
           duration: 4000,
           isClosable: true,
@@ -57,12 +58,13 @@ export function BookEdit() {
   }
 
   useEffect(() => {
-    getBook(params.id as any).then((res) => {
+    getRecipe(params.id as any).then((res) => {
       setValue("title", res.title);
-      setValue("author", res.author);
+      // setValue("author", res.author);
       setValue("description", res.description);
-      setValue("price", res.price);
-      setValue("type", res.type);
+      setValue("instructions", res.instructions);
+      // setValue("price", res.price);
+      // setValue("type", res.type);
     });
   }, [params, setValue]);
 
@@ -82,18 +84,15 @@ export function BookEdit() {
                   />
                 </div>
 
-                <div className="mt-3">
-                  <label>Author *</label>
-                  <input
-                      type="text"
-                      placeholder="Author"
-                      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
-                      {...register("author")}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 grid-flow-row gap-14">
+                {/*<div className="mt-3">*/}
+                {/*  <label>Author *</label>*/}
+                {/*  <input*/}
+                {/*      type="text"*/}
+                {/*      placeholder="Author"*/}
+                {/*      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"*/}
+                {/*      {...register("author")}*/}
+                {/*  />*/}
+                {/*</div>*/}
                 <div className="mt-3">
                   <label>Description *</label>
                   <input
@@ -103,43 +102,64 @@ export function BookEdit() {
                       {...register("description")}
                   />
                 </div>
-
-                <div className="mt-3">
-                  <label>Type *</label>
-                  <select
-                      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
-                      {...register("type")}
-                  >
-                    <option value="">Select a type</option>
-                    <option value="Fantasy">Fantasy</option>
-                    <option value="Thriller">Thriller</option>
-                    <option value="Sci-fi">Sci-fi</option>
-                    <option value="Romance">Romance</option>
-                  </select>
-                </div>
               </div>
 
               <div className="grid grid-cols-2 grid-flow-row gap-14">
                 <div className="mt-3">
-                  <label>Price *</label>
+                  <label>Instructions *</label>
                   <input
-                      type="number"
-                      placeholder="Price"
+                      type="text"
+                      placeholder="Instructions"
                       className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
-                      {...register("price")}
+                      {...register("instructions")}
                   />
                 </div>
 
+                {/*<div className="mt-3">*/}
+                {/*  <label>Type *</label>*/}
+                {/*  <select*/}
+                {/*      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"*/}
+                {/*      {...register("type")}*/}
+                {/*  >*/}
+                {/*    <option value="">Select a type</option>*/}
+                {/*    <option value="Fantasy">Fantasy</option>*/}
+                {/*    <option value="Thriller">Thriller</option>*/}
+                {/*    <option value="Sci-fi">Sci-fi</option>*/}
+                {/*    <option value="Romance">Romance</option>*/}
+                {/*  </select>*/}
+                {/*</div>*/}
                 <div className="mt-3">
-                    <label>Image *</label>
-                    <input
-                        type="file"
-                        placeholder="Image"
-                        className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
-                        onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                    />
+                  <label>Image *</label>
+                  <input
+                      type="file"
+                      placeholder="Image"
+                      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
+                      onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                  />
                 </div>
               </div>
+
+              {/*<div className="grid grid-cols-2 grid-flow-row gap-14">*/}
+              {/*  <div className="mt-3">*/}
+              {/*    <label>Price *</label>*/}
+              {/*    <input*/}
+              {/*        type="number"*/}
+              {/*        placeholder="Price"*/}
+              {/*        className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"*/}
+              {/*        {...register("price")}*/}
+              {/*    />*/}
+              {/*  </div>*/}
+
+              {/*  <div className="mt-3">*/}
+              {/*      <label>Image *</label>*/}
+              {/*      <input*/}
+              {/*          type="file"*/}
+              {/*          placeholder="Image"*/}
+              {/*          className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"*/}
+              {/*          onChange={(e) => setImageFile(e.target.files?.[0] || null)}*/}
+              {/*      />*/}
+              {/*  </div>*/}
+              {/*</div>*/}
               <div className="w-full flex justify-between items-center">
                 <div className="text-xs text-zinc-500">* Required field</div>
                 <div className="flex">

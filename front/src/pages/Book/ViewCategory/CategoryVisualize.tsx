@@ -1,77 +1,85 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import {getBooksByType, getImage} from "../../../api/book/book.service";
+import {getRecipesByType, getImage} from "../../../api/recipe/recipe.service";
 import { HeaderTemplate } from "../../../templates/HeaderTemplate";
 
-const bookTypes: any = {
-    "sci-fi": "Sci-fi",
-    "fantasy": "Fantasy",
-    "romance": "Romance",
-    "thriller": "Thriller",
-}
+const cuisineTypes: any = {
+    "italian": "Italian",
+    "chinese": "Chinese",
+    "mexican": "Mexican",
+    "indian": "Indian",
+    "japanese": "Japanese",
+    "french": "French",
+    "thai": "Thai",
+    "greek": "Greek",
+    "spanish": "Spanish",
+    "brazilian": "Brazilian",
+    "middleEastern": "Middle Eastern",
+    "vietnamese": "Vietnamese",
+    "korean": "Korean",
+    "african": "African",
+    "mediterranean": "Mediterranean",
+};
 
 export function CategoryVisualize() {
     const { type } = useParams() as any;
-    const [books, setBooks] = useState([]);
-    const [bookImages, setBookImages] = useState([]);
+    const [recipes, setRecipes] = useState([]);
+    const [recipeImages, setRecipeImages] = useState([]);
 
     useEffect(() => {
         if (!type) return;
-        getBooksByType(type).then((books) => {
+        getRecipesByType(type).then((recipes) => {
             // @ts-ignore
-            setBooks(books);
+            setRecipes(recipes);
         });
     }, [type]);
 
     useEffect(() => {
-        const fetchBookImages = async () => {
-            if (books) {
+        const fetchRecipeImages = async () => {
+            if (recipes) {
                 const imageLinks = await Promise.all(
-                    books.map(async (book) => {
-                        const imageData = await getImage(book.image);
+                    recipes.map(async (recipe) => {
+                        const imageData = await getImage(recipe.image);
                         const imageUrl = URL.createObjectURL(imageData);
                         return {
-                            id: book.id,
+                            id: recipe.id,
                             cover: imageUrl,
-                            label: book.title,
-                            author: book.author,
-                            description: book.description,
-                            price: book.price,
+                            label: recipe.title,
+                            //author: recipe.author,
+                            description: recipe.instructions,
                         };
                     })
                 );
-                setBookImages(imageLinks);
+                setRecipeImages(imageLinks);
             }
         };
 
-        fetchBookImages();
-    }, [books]);
+        fetchRecipeImages();
+    }, [recipes]);
 
     return (
         <HeaderTemplate>
             <div className="m-12">
-                <h1 className="text-3xl font-bold mb-8">{bookTypes[type]} Books</h1>
+                <h1 className="text-3xl font-bold mb-8">{cuisineTypes[type]} Recipes</h1>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {bookImages.map((book) => (
+                    {recipeImages.map((recipe) => (
                         // @ts-ignore
-                        <Link to={`/book/${book.id}/visualize`} key={book.id}>
+                        <Link to={`/recipe/${recipe.id}/visualize`} key={recipe.id}>
                             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                                 <div className="h-64 bg-gray-300">
                                     <img
                                         className="object-contain h-full w-full"
-                                        src={book.cover}
-                                        alt="Book cover"
+                                        src={recipe.cover}
+                                        alt="Recipe cover"
                                     />
                                 </div>
                                 <div className="p-4">
                                     {/*@ts-ignore*/}
-                                    <h2 className="text-lg font-bold mb-2">{book.label}</h2>
+                                    <h2 className="text-lg font-bold mb-2">{recipe.label}</h2>
                                     {/*@ts-ignore*/}
-                                    <p className="text-gray-600 text-sm">{book.author}</p>
+                                    <p className="text-gray-600 text-sm">{recipe.author}</p>
                                     {/*@ts-ignore*/}
-                                    <p className="text-gray-600 text-sm">{book.description}</p>
-                                    {/*@ts-ignore*/}
-                                    <p className="text-gray-600 text-sm">${book.price.toFixed(2)}</p>
+                                    <p className="text-gray-600 text-sm">{recipe.description}</p>
                                 </div>
                             </div>
                         </Link>

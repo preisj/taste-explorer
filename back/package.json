@@ -15,7 +15,7 @@
     "@fastify/multipart": "^7.6.0",
     "@fastify/static": "^6.10.2",
     "@prisma/client": "^4.12.0",
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "dayjs": "^1.11.7",
     "fastify": "^4.11.0",
     "fastify-multer": "^2.0.3",

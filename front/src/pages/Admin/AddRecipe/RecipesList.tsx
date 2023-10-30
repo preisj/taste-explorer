@@ -13,56 +13,67 @@ import {
     Select
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { Book } from "../../../interfaces/BookInterface";
+import { Recipe } from "../../../interfaces/RecipeInterface";
 import { DotsThree, MagnifyingGlass, Pencil, Trash, ArrowClockwise } from "phosphor-react";
 import clsx from "clsx";
 import { ModalDelete } from "../AddUser/ModalDelete";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable'
 
-const typeOptions = [
-    { value: "Fantasy", label: "Fantasy" },
-    { value: "Thriller", label: "Thriller" },
-    { value: "Sci-fi", label: "Sci-fi" },
-    { value: "Romance", label: "Romance" },
+const cuisineTypes = [
+    { value: "italian", label: "Italian" },
+    { value: "chinese", label: "Chinese" },
+    { value: "mexican", label: "Mexican" },
+    { value: "indian", label: "Indian" },
+    { value: "japanese", label: "Japanese" },
+    { value: "french", label: "French" },
+    { value: "thai", label: "Thai" },
+    { value: "greek", label: "Greek" },
+    { value: "spanish", label: "Spanish" },
+    { value: "brazilian", label: "Brazilian" },
+    { value: "middleEastern", label: "Middle Eastern" },
+    { value: "vietnamese", label: "Vietnamese" },
+    { value: "korean", label: "Korean" },
+    { value: "african", label: "African" },
+    { value: "mediterranean", label: "Mediterranean" },
 ];
 
-interface BooksTableProps {
-    books: Array<Book>;
-    onEdit: (book: Book) => void;
-    onDelete: (book: Book) => void;
+interface RecipesTableProps {
+    recipes: Array<Recipe>;
+    onEdit: (recipe: Recipe) => void;
+    onDelete: (recipe: Recipe) => void;
 }
 
-export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
+export const RecipesList: React.FunctionComponent<RecipesTableProps> = (props) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [bookSelected, setBookSelected] = useState<Book | null>(null);
+    const [recipeSelected, setRecipeSelected] = useState<Recipe | null>(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [filter, setFilter] = useState("");
     const [authorFilter, setAuthorFilter] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
 
-    const bookFilter = props.books.filter((book) =>
-        book.title.toLowerCase().includes(filter.toLowerCase()) &&
-        book.author.toLowerCase().includes(authorFilter.toLowerCase()) &&
-        (typeFilter === "" || (book?.type && book.type.toLowerCase() === typeFilter.toLowerCase()))
+    const recipeFilter = props.recipes.filter((recipe) =>
+        recipe.title.toLowerCase().includes(filter.toLowerCase()) //&&
+        //recipe.author.toLowerCase().includes(authorFilter.toLowerCase()) &&
+        //(typeFilter === "" || (recipe?.type && recipe.type.toLowerCase() === typeFilter.toLowerCase()))
     );
 
     const generateReport = () => {
         const doc = new jsPDF();
-        const tableColumn = ["Title", "Author", "Description", "Price", "Type", "ID"];
+        const tableColumn = ["Title", "Description", "Instructions", "ID"];
         const tableRows: (string | number)[][] = [];
 
         // Add data to tableRows
-        bookFilter.forEach((book) => {
-            const bookData = [book.title, book.author, book.description, book.price, book.type, book.id];
-            tableRows.push(bookData);
+        recipeFilter.forEach((recipe) => {
+            const recipeData = [recipe.title, recipe.description, recipe.instructions, recipe.id];
+            tableRows.push(recipeData);
         });
 
         // Add table to the PDF document
         autoTable(doc, { columns: tableColumn, body: tableRows, startY: 20 });
 
         // Save the PDF
-        doc.save("book-list.pdf");
+        doc.save("recipe-list.pdf");
     };
 
     const generateCSV = () => {
@@ -70,16 +81,16 @@ export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
         const tableRows: (string | number)[][] = [];
 
         // Add data to tableRows
-        bookFilter.forEach((book) => {
-            const bookData = [book.title, book.author, book.description, book.price, book.type, book.id];
-            tableRows.push(bookData);
+        recipeFilter.forEach((recipe) => {
+            const recipeData = [recipe.title, recipe.description, recipe.instructions, recipe.id];
+            tableRows.push(recipeData);
         });
 
         const csvContent = "data:text/csv;charset=utf-8," + tableColumn.join(",") + "\n" + tableRows.map(row => row.join(",")).join("\n");
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "book-list.csv");
+        link.setAttribute("download", "recipe-list.csv");
         document.body.appendChild(link);
         link.click();
     };
@@ -159,7 +170,7 @@ export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
                             value={typeFilter}
                         >
                             <option value="">All</option>
-                            {typeOptions.map((type) => (
+                            {cuisineTypes.map((type) => (
                                 <option key={type.value} value={type.value}>
                                     {type.label}
                                 </option>
@@ -172,27 +183,23 @@ export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
             <Table
                 variant="striped"
                 colorScheme="zinc"
-                className="bookTable"
+                className="recipeTable"
             >
                 <Thead>
                     <Tr>
                         <Th>Title</Th>
-                        <Th>Author</Th>
                         <Th>Description</Th>
-                        <Th>Price</Th>
-                        <Th>Type</Th>
+                        <Th>Instructions</Th>
                         <Th></Th>
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {bookFilter.length > 0 ? (
-                        bookFilter.map((book) => (
-                            <Tr key={book.id}>
-                                <Td>{book.title}</Td>
-                                <Td>{book.author}</Td>
-                                <Td>{book.description}</Td>
-                                <Td>{book.price}</Td>
-                                <Td>{book.type}</Td>
+                    {recipeFilter.length > 0 ? (
+                        recipeFilter.map((recipe) => (
+                            <Tr key={recipe.id}>
+                                <Td>{recipe.title}</Td>
+                                <Td>{recipe.description}</Td>
+                                <Td>{recipe.instructions}</Td>
 
                                 <Td>
                                     <div
@@ -215,7 +222,7 @@ export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
                                                 <DotsThree size={28} />
                                             </MenuButton>
                                             <MenuList style={{ minWidth: "120px" }}>
-                                                <MenuItem onClick={() => props.onEdit(book)}>
+                                                <MenuItem onClick={() => props.onEdit(recipe)}>
                                                     <div style={{ cursor: "pointer" }}>
                               <span
                                   style={{
@@ -235,7 +242,7 @@ export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
                                                 </MenuItem>
                                                 <MenuItem
                                                     onClick={() => {
-                                                        setBookSelected(book);
+                                                        setRecipeSelected(recipe);
                                                         setIsModalVisible(true);
                                                     }}
                                                 >
@@ -264,21 +271,21 @@ export const BooksList: React.FunctionComponent<BooksTableProps> = (props) => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={8}>No books registered</td>
+                            <td colSpan={8}>No recipes registered</td>
                         </tr>
                     )}
                 </Tbody>
-                {isModalVisible && bookSelected ? (
+                {isModalVisible && recipeSelected ? (
                     <ModalDelete
-                        text={bookSelected.title}
+                        text={recipeSelected.title}
                         onCloseModal={() => {
                             setIsModalVisible(false);
-                            setBookSelected(null);
+                            setRecipeSelected(null);
                         }}
                         confirmDelete={() => {
-                            props.onDelete(bookSelected);
+                            props.onDelete(recipeSelected);
                             setIsModalVisible(false);
-                            setBookSelected(null);
+                            setRecipeSelected(null);
                         }}
                     />
                 ) : null}
