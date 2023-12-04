@@ -4,7 +4,7 @@ import { AddUser } from "./AddUser/AddUser";
 import { AddRecipe } from "./AddRecipe/AddRecipe";
 import { UserTable } from "./AddUser/UserTable";
 import { RecipesTable } from "./AddRecipe/RecipesTable";
-import { SalesReport } from "./Reports/SalesReport";
+// import { SalesReport } from "./Reports/SalesReport";
 
 export function UserPage() {
   return (
@@ -31,11 +31,11 @@ export function UserPage() {
             <TabPanel>
               <AddUser />
             </TabPanel>
-            <TabPanel>
-              <div id="echartsContainer" style={{ height: "90vh" }}>
-                <SalesReport />
-              </div>
-            </TabPanel>
+            {/*<TabPanel>*/}
+            {/*  <div id="echartsContainer" style={{ height: "90vh" }}>*/}
+            {/*    <SalesReport />*/}
+            {/*  </div>*/}
+            {/*</TabPanel>*/}
           </TabPanels>
         </Tabs>
       </div>

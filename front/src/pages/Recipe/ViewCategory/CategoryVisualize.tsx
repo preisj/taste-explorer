@@ -47,6 +47,7 @@ export function CategoryVisualize() {
                             label: recipe.title,
                             //author: recipe.author,
                             description: recipe.instructions,
+                            type: recipe.type,
                         };
                     })
                 );
@@ -80,6 +81,8 @@ export function CategoryVisualize() {
                                     <p className="text-gray-600 text-sm">{recipe.author}</p>
                                     {/*@ts-ignore*/}
                                     <p className="text-gray-600 text-sm">{recipe.description}</p>
+                                    {/*@ts-ignore*/}
+                                    <p className="text-gray-600 text-sm">{recipe.type}</p>
                                 </div>
                             </div>
                         </Link>

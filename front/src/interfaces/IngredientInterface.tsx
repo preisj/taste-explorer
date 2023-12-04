@@ -3,8 +3,6 @@ export interface Ingredient {
   name: string;
   tags: string;
   qtd: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type AddIngPayload = Omit<Ingredient, "id">;

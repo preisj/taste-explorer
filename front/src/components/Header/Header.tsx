@@ -1,5 +1,4 @@
 import {
-  useDisclosure,
   Menu,
   MenuButton,
   MenuList,
@@ -9,18 +8,13 @@ import {
   Wrench,
   UserCircle,
   House,
-  ShoppingCart,
-  Bag,
   Plus,
 } from "phosphor-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Cart } from "../Cart/Cart";
 
 export function Header() {
   const { auth, logout } = useAuth();
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <div className="fixed flex flex-col h-full bg-blue-500 shadow-md w-20 justify-between items-center z-10">
@@ -44,13 +38,6 @@ export function Header() {
 
           {auth.isAuthenticated && (
             <div>
-              <Link to="/my-orders">
-                <Bag
-                  size={36}
-                  className="my-2 text-white cursor-pointer hover:opacity-80 transition-all rounded-full h-8 w-8"
-                />
-              </Link>
-
               <Link to="/my-ing">
                 <Plus
                   size={36}
@@ -80,8 +67,6 @@ export function Header() {
               />
             </Link>
           )}
-
-          {auth.isAuthenticated && <Cart onClose={onClose} isOpen={isOpen} />}
         </div>
       </div>
     </div>

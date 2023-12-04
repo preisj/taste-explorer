@@ -68,7 +68,7 @@ export const RecipesList: React.FunctionComponent<RecipesTableProps> = (
 
   const generateReport = () => {
     const doc = new jsPDF();
-    const tableColumn = ["Title", "Description", "Instructions"];
+    const tableColumn = ["Title", "Description", "Instructions", "Type"];
     const tableRows: (string | number)[][] = [];
 
     // Add data to tableRows
@@ -77,6 +77,7 @@ export const RecipesList: React.FunctionComponent<RecipesTableProps> = (
         recipe.title,
         recipe.description,
         recipe.instructions,
+        recipe.type
       ];
       tableRows.push(recipeData);
     });
@@ -91,9 +92,8 @@ export const RecipesList: React.FunctionComponent<RecipesTableProps> = (
   const generateCSV = () => {
     const tableColumn = [
       "Title",
-      "Author",
       "Description",
-      "Price",
+      "Instructions",
       "Type",
       "ID",
     ];
@@ -105,6 +105,7 @@ export const RecipesList: React.FunctionComponent<RecipesTableProps> = (
         recipe.title,
         recipe.description,
         recipe.instructions,
+        recipe.type,
         recipe.id,
       ];
       tableRows.push(recipeData);
@@ -214,6 +215,7 @@ export const RecipesList: React.FunctionComponent<RecipesTableProps> = (
             <Th>Title</Th>
             <Th>Description</Th>
             <Th>Instructions</Th>
+            <Th>Type</Th>
             <Th></Th>
           </Tr>
         </Thead>
@@ -224,6 +226,7 @@ export const RecipesList: React.FunctionComponent<RecipesTableProps> = (
                 <Td>{recipe.title}</Td>
                 <Td>{recipe.description}</Td>
                 <Td>{recipe.instructions}</Td>
+                <Td>{recipe.type}</Td>
 
                 <Td>
                   <div

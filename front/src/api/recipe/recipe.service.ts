@@ -30,16 +30,16 @@ export function getImage(image: string | undefined): Promise<Blob> {
         .then((res) => res.data);
 }
 
-export function getRecipe(bookId: string) {
-    return api.get<Recipe>(`/recipe/${bookId}/show`).then((res) => res.data);
+export function getRecipe(recipeId: string) {
+    return api.get<Recipe>(`/recipe/${recipeId}/show`).then((res) => res.data);
 }
 
 export function getRecipes() {
     return api.get<Recipe[]>(`/recipes/all`).then((res) => res.data);
 }
 
-export function deleteRecipe(bookId: string) {
-    return api.delete(`/recipe/${bookId}/delete`).then((res) => res.data);
+export function deleteRecipe(recipeId: string) {
+    return api.delete(`/recipe/${recipeId}/delete`).then((res) => res.data);
 }
 
 export function getRecipesByType(type: string) {

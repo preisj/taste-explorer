@@ -3,10 +3,6 @@ import "./LandingPage.css";
 import { useState, useEffect, useRef } from "react";
 
 import { HeaderTemplate } from "../../templates/HeaderTemplate";
-import romanceCover from "../../assets/romance-cover.jpg";
-import thrillerCover from "../../assets/thriller-cover.jpg";
-import scifiCover from "../../assets/scifi-cover.png";
-import fantasyCover from "../../assets/fantasy-cover.jpg";
 import topCover from "../../assets/landing-page-image.jpg";
 import italianCuisineCover from "../../assets/italianCuisineCover.jpg";
 import chineseCuisineCover from "../../assets/chineseCuisineCover.jpg";
@@ -28,17 +24,16 @@ import {
   FacebookLogo,
   InstagramLogo,
   Plus,
-  ShoppingCart,
   Trophy,
   TwitterLogo,
 } from "phosphor-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Book } from "../../interfaces/BookInterface";
+import { Recipe } from "../../interfaces/RecipeInterface";
 import { useToast } from "@chakra-ui/react";
-import { getBooks, getImage } from "../../api/book/book.service";
+import { getRecipes, getImage } from "../../api/recipe/recipe.service";
 import { useAuth } from "../../context/AuthContext";
-import { addToCart } from "../../api/cart/cart.service";
+import {getPerson} from "../../api/person/person.service";
 
 const cuisineImages = [
   {
@@ -106,17 +101,17 @@ const cuisineImages = [
 export function LandingPage() {
   const carousel = useRef(null);
   const [carouselWidth, setCarouselWidth] = useState(0);
-  const [books, setBooks] = useState<Book[]>([]);
-  const [bookImages, setBookImages] = useState<any[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipeImages, setRecipeImages] = useState<any[]>([]);
   const toast = useToast();
   const { auth } = useAuth();
 
-  const fetchBooks = () => {
+  const fetchRecipes = () => {
     // @ts-ignore
-    getBooks().then((data) => {
+    getRecipes().then((data) => {
       // @ts-ignore
-      const lastSixBooks = data.slice(-6);
-      setBooks(lastSixBooks);
+      const lastSixRecipes = data.slice(-6);
+      setRecipes(lastSixRecipes);
     });
   };
 
@@ -125,31 +120,32 @@ export function LandingPage() {
     setCarouselWidth(
       carousel.current?.scrollWidth - carousel.current?.offsetWidth
     );
-    fetchBooks();
+    fetchRecipes();
   }, []);
 
   useEffect(() => {
-    const fetchBookImages = async () => {
-      if (books) {
+    const fetchRecipeImages = async () => {
+      if (recipes) {
         const imageLinks = await Promise.all(
-          books.map(async (book) => {
-            const imageData = await getImage(book.image);
+          recipes.map(async (recipe) => {
+            const createdBy = await getPerson(recipe?.userId);
+            const imageData = await getImage(recipe.image);
             const imageUrl = URL.createObjectURL(imageData);
             return {
               cover: imageUrl,
-              label: book.title,
-              category: book.type,
-              price: book.price,
-              id: book.id,
+              label: recipe.title,
+              category: recipe.type,
+              creator: createdBy.firstName + " " + createdBy.lastName,
+              id: recipe.id,
             };
           })
         );
-        setBookImages(imageLinks);
+        setRecipeImages(imageLinks);
       }
     };
 
-    fetchBookImages();
-  }, [books]);
+    fetchRecipeImages();
+  }, [recipes]);
 
   return (
     <HeaderTemplate>
@@ -197,54 +193,27 @@ export function LandingPage() {
 
         <div className="flex items-center w-full justify-center flex-col mt-12">
           <strong className="text-zinc-500 text-base flex items-center">
-            RECEM ADICIONADOS
+            RECÉM ADICIONADOS
             <Plus size={24} className="ml-2" />
           </strong>
         </div>
         <div className="flex items-center w-full justify-center">
           <div className="grid grid-cols-6 grid-flow-row mt-4 w-[58%] mb-4">
-            {bookImages.map((book, index) => (
+            {recipeImages.map((recipe, index) => (
               <div key={index} className="max-w-[140px] ml-2 mr-2">
                 <div
                   className="w-full h-[200px] flex justify-center items-end p-4 cursor-pointer bg-[#f8f8f8] shadow-md shadow-zinc-400 hover:shadow-zinc-500 transition-all"
                   style={{
-                    backgroundImage: `url(${book.cover})`,
+                    backgroundImage: `url(${recipe.cover})`,
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
                   }}
                 >
                   <div className="flex flex-col space-y-1">
-                    {auth.isAuthenticated && (
-                      <button
-                        className="w-full h-10 inline-flex items-center justify-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md overflow-hidden"
-                        onClick={async () => {
-                          const res = await addToCart(
-                            auth.personId,
-                            book.id,
-                            1
-                          );
-                          if (res !== null) {
-                            toast({
-                              title: "Book added to cart",
-                              status: "success",
-                              duration: 3000,
-                              isClosable: true,
-                            });
-                          } else {
-                            toast({
-                              title: "Error adding book to cart",
-                              status: "warning",
-                              duration: 3000,
-                              isClosable: true,
-                            });
-                          }
-                        }}
-                      ></button>
-                    )}
                     <button className="w-full h-10 inline-flex items-center justify-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md overflow-hidden">
-                      {book.id && (
+                      {recipe.id && (
                         <Link
-                          to={`/book/${book.id}/visualize`}
+                          to={`/recipe/${recipe.id}/visualize`}
                           className="text-center flex flex-col items-center"
                         >
                           <div className="text-xs overflow-hidden whitespace-nowrap max-w-full truncate">
@@ -257,10 +226,10 @@ export function LandingPage() {
                 </div>
                 <div className="p-1 flex flex-col">
                   <strong className="text-base text-blue-500">
-                    {book.label}
+                    {recipe?.label}
                   </strong>
-                  <span className="text-sm text-zinc-500">{book.category}</span>
-                  <span>U$ {book.price}</span>
+                  <span className="text-sm text-zinc-500">{recipe?.category}</span>
+                  <span className="text-sm text-zinc-500">{recipe.creator}</span>
                 </div>
               </div>
             ))}

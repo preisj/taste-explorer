@@ -2,15 +2,11 @@ import { api } from "..";
 import {Ingredient, AddIngPayload, EditIngPayload} from "../../interfaces/IngredientInterface";
 
 export function addIngredient(payload: AddIngPayload) {
-    const formData = createFormData(payload);
-    console.log(formData);
-    console.log(payload);
-    return api.post("/ingredient/add", formData).then((res) => res.data);
+    return api.post("/ingredient/add", payload).then((res) => res.data);
 }
 
 export function editIngredient(payload: EditIngPayload) {
-    const formData = createFormData(payload);
-    return api.put(`/ingredient/${payload.id}/update`, formData).then((res) => res.data);
+    return api.put(`/ingredient/${payload.id}/update`, payload).then((res) => res.data);
 }
 
 function createFormData(payload: Omit<Ingredient, "id"> | Omit<Ingredient, "id">) {

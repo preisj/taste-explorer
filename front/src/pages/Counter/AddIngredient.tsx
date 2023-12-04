@@ -9,8 +9,6 @@ export function AddIngredient() {
   const [name, setName] = useState("");
   const [qtd, setQtd] = useState("");
   const [tags, setTags] = useState("");
-  const [createdAt, setCreatedAt] = useState(new Date());
-  const [updatedAt, setUpdatedAt] = useState(new Date());
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -24,13 +22,11 @@ export function AddIngredient() {
       name,
       qtd,
       tags,
-      createdAt,
-      updatedAt,
     })
       .then(() => {
         clearForm();
         toast({
-          description: "Novo ingrediente adiconado",
+          description: "Novo ingrediente adicionado",
           status: "success",
           duration: 4000,
           isClosable: true,
@@ -39,7 +35,7 @@ export function AddIngredient() {
       .catch((error) => {
         console.log(error);
         toast({
-          description: "Erro ao adcionar ingrediente",
+          description: "Erro ao adicionar ingrediente",
           status: "error",
           duration: 4000,
           isClosable: true,

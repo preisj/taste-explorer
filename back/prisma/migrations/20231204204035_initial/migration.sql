@@ -13,6 +13,14 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Cuisine" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "PantryItem" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
@@ -30,6 +38,8 @@ CREATE TABLE "Recipe" (
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "instructions" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
@@ -42,7 +52,8 @@ CREATE TABLE "Ingredient" (
     "name" TEXT NOT NULL,
     "tags" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "updatedAt" DATETIME NOT NULL,
+    "qtd" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -77,49 +88,11 @@ CREATE TABLE "Market" (
 );
 
 -- CreateTable
-CREATE TABLE "Book" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "title" TEXT NOT NULL,
-    "author" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "price" REAL NOT NULL,
-    "type" TEXT NOT NULL,
-    "image" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Cart" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "personId" TEXT NOT NULL,
-    "bookId" TEXT NOT NULL,
-    "quantity" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Order" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "personId" TEXT NOT NULL,
-    "completed" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    "totalPrice" REAL NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "OrderItem" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "orderId" TEXT NOT NULL,
-    "bookId" TEXT NOT NULL,
-    "quantity" INTEGER NOT NULL,
-    "price" REAL NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "OrderItem_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+CREATE TABLE "_CuisineToRecipe" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+    CONSTRAINT "_CuisineToRecipe_A_fkey" FOREIGN KEY ("A") REFERENCES "Cuisine" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_CuisineToRecipe_B_fkey" FOREIGN KEY ("B") REFERENCES "Recipe" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex
@@ -127,6 +100,9 @@ CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Cuisine_id_key" ON "Cuisine"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "PantryItem_id_key" ON "PantryItem"("id");
@@ -147,4 +123,7 @@ CREATE UNIQUE INDEX "DietaryRestriction_id_key" ON "DietaryRestriction"("id");
 CREATE UNIQUE INDEX "Market_id_key" ON "Market"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Cart_id_key" ON "Cart"("id");
+CREATE UNIQUE INDEX "_CuisineToRecipe_AB_unique" ON "_CuisineToRecipe"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_CuisineToRecipe_B_index" ON "_CuisineToRecipe"("B");

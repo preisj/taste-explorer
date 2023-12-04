@@ -9,14 +9,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {editRecipe, getRecipe} from "../../../api/recipe/recipe.service";
 import { HeaderTemplate } from "../../../templates/HeaderTemplate";
 import {useEffect, useState} from "react";
+import {useAuth} from "../../../context/AuthContext";
 
 const editRecipeSchema = z.object({
   title: z.string().min(3),
-  // author: z.string().min(3),
   description: z.string().min(3),
   instructions: z.string().min(3),
-  // price: z.number().min(0),
-  // type: z.string().min(3),
+  type: z.string().min(3),
 });
 
 export function RecipeEdit() {
@@ -24,6 +23,10 @@ export function RecipeEdit() {
     shouldUseNativeValidation: true,
     resolver: zodResolver(editRecipeSchema),
   });
+
+  const { auth } = useAuth();
+
+  console.log(auth);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -60,11 +63,9 @@ export function RecipeEdit() {
   useEffect(() => {
     getRecipe(params.id as any).then((res) => {
       setValue("title", res.title);
-      // setValue("author", res.author);
       setValue("description", res.description);
       setValue("instructions", res.instructions);
-      // setValue("price", res.price);
-      // setValue("type", res.type);
+      setValue("type", res.type);
     });
   }, [params, setValue]);
 
@@ -83,16 +84,6 @@ export function RecipeEdit() {
                       {...register("title")}
                   />
                 </div>
-
-                {/*<div className="mt-3">*/}
-                {/*  <label>Author *</label>*/}
-                {/*  <input*/}
-                {/*      type="text"*/}
-                {/*      placeholder="Author"*/}
-                {/*      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"*/}
-                {/*      {...register("author")}*/}
-                {/*  />*/}
-                {/*</div>*/}
                 <div className="mt-3">
                   <label>Description *</label>
                   <input
@@ -115,19 +106,30 @@ export function RecipeEdit() {
                   />
                 </div>
 
-                {/*<div className="mt-3">*/}
-                {/*  <label>Type *</label>*/}
-                {/*  <select*/}
-                {/*      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"*/}
-                {/*      {...register("type")}*/}
-                {/*  >*/}
-                {/*    <option value="">Select a type</option>*/}
-                {/*    <option value="Fantasy">Fantasy</option>*/}
-                {/*    <option value="Thriller">Thriller</option>*/}
-                {/*    <option value="Sci-fi">Sci-fi</option>*/}
-                {/*    <option value="Romance">Romance</option>*/}
-                {/*  </select>*/}
-                {/*</div>*/}
+                <div className="mt-3">
+                  <label>Type *</label>
+                  <select
+                      className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"
+                      {...register("type")}
+                  >
+                    <option value="">Select a cuisine type</option>
+                    <option value="italian">Italian</option>
+                    <option value="chinese">Chinese</option>
+                    <option value="mexican">Mexican</option>
+                    <option value="indian">Indian</option>
+                    <option value="japanese">Japanese</option>
+                    <option value="french">French</option>
+                    <option value="thai">Thai</option>
+                    <option value="greek">Greek</option>
+                    <option value="spanish">Spanish</option>
+                    <option value="brazilian">Brazilian</option>
+                    <option value="middleEastern">Middle Eastern</option>
+                    <option value="vietnamese">Vietnamese</option>
+                    <option value="korean">Korean</option>
+                    <option value="african">African</option>
+                    <option value="mediterranean">Mediterranean</option>
+                  </select>
+                </div>
                 <div className="mt-3">
                   <label>Image *</label>
                   <input
@@ -139,27 +141,6 @@ export function RecipeEdit() {
                 </div>
               </div>
 
-              {/*<div className="grid grid-cols-2 grid-flow-row gap-14">*/}
-              {/*  <div className="mt-3">*/}
-              {/*    <label>Price *</label>*/}
-              {/*    <input*/}
-              {/*        type="number"*/}
-              {/*        placeholder="Price"*/}
-              {/*        className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"*/}
-              {/*        {...register("price")}*/}
-              {/*    />*/}
-              {/*  </div>*/}
-
-              {/*  <div className="mt-3">*/}
-              {/*      <label>Image *</label>*/}
-              {/*      <input*/}
-              {/*          type="file"*/}
-              {/*          placeholder="Image"*/}
-              {/*          className="w-full p-3 mt-1 rounded-lg placeholder:text-zinc-400 border-[1px] border-zinc-500"*/}
-              {/*          onChange={(e) => setImageFile(e.target.files?.[0] || null)}*/}
-              {/*      />*/}
-              {/*  </div>*/}
-              {/*</div>*/}
               <div className="w-full flex justify-between items-center">
                 <div className="text-xs text-zinc-500">* Required field</div>
                 <div className="flex">

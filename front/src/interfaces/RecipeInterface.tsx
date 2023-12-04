@@ -3,6 +3,7 @@ export interface Recipe {
     title: string;
     description: string;
     instructions: string;
+    type: string;
     userId?: string;
     image?: string;
 }

@@ -1,36 +1,70 @@
 import { HeaderTemplate } from "../../templates/HeaderTemplate";
 
+
 export function FAQ() {
     return (
         <HeaderTemplate>
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-4">Frequently Asked Questions</h1>
+                <h1 className="text-3xl font-bold mb-4">FAQ</h1>
                 <div className="mb-8">
-                    <h2 className="text-xl font-bold mb-4">How does the pantry and recipe management app work?</h2>
+                    <h2 className="text-xl font-bold mb-4">
+                        Como funciona o aplicativo de gestão de despensa e receitas?
+                    </h2>
                     <p>
-                        Our app simplifies your food organization and meal creation process. Here's how it works:
+                        Nosso aplicativo simplifica o processo de organização dos seus
+                        alimentos e criação de refeições. Aqui está como ele funciona:
                     </p>
                     <ol className="list-decimal pl-6 mt-2 mb-4">
-                        <li>Add products to your pantry, including their name, expiration date, and quantity.</li>
-                        <li>Receive notifications when your pantry items are running low.</li>
-                        <li>Explore a wide range of recipes based on the ingredients available in your pantry.</li>
-                        <li>Customize your profile with dietary restrictions and personal preferences for personalized recipe recommendations.</li>
-                        <li>Join our recipe sharing community to post your culinary creations and discover new ideas.</li>
-                        <li>Use Google Maps integration to find nearby markets and get daily dish suggestions.</li>
+                        <li>
+                            Adicione produtos à sua despensa, incluindo o nome, a data de
+                            validade e a quantidade.
+                        </li>
+                        <li>
+                            Receba notificações quando os itens da sua despensa estiverem
+                            acabando.
+                        </li>
+                        <li>
+                            Explore uma ampla variedade de receitas com base nos ingredientes
+                            disponíveis na sua despensa.
+                        </li>
+                        <li>
+                            Personalize seu perfil com restrições dietéticas e preferências
+                            pessoais para receber recomendações de receitas personalizadas.
+                        </li>
+                        <li>
+                            Junte-se à nossa comunidade de compartilhamento de receitas para
+                            publicar suas criações culinárias e descobrir novas ideias.
+                        </li>
+                        <li>
+                            Utilize a integração com o Google Maps para encontrar mercados
+                            próximos e receber sugestões diárias de pratos.
+                        </li>
                     </ol>
                 </div>
                 <div className="mb-8">
-                    <h2 className="text-xl font-bold mb-4">What features are available in the app?</h2>
-                    <p>
-                        Our app offers the following features:
-                    </p>
+                    <h2 className="text-xl font-bold mb-4">
+                        Quais recursos estão disponíveis no aplicativo?
+                    </h2>
+                    <p>Nosso aplicativo oferece os seguintes recursos:</p>
                     <ul className="list-disc pl-6 mt-2 mb-4">
-                        <li>Pantry management with notifications for low-stock items.</li>
-                        <li>Recipe suggestions based on your pantry ingredients.</li>
-                        <li>Customizable user profiles with dietary restrictions and preferences.</li>
-                        <li>A recipe sharing community to post and discover new recipes.</li>
-                        <li>Integration with Google Maps to find nearby markets.</li>
-                        <li>Daily dish suggestions for your culinary adventures.</li>
+                        <li>
+                            Gestão de despensa com notificações para itens com baixo estoque.
+                        </li>
+                        <li>
+                            Sugestões de receitas com base nos ingredientes da sua despensa.
+                        </li>
+                        <li>
+                            Perfis de usuário personalizáveis com restrições alimentares e
+                            preferências.
+                        </li>
+                        <li>
+                            Uma comunidade de compartilhamento de receitas para postar e
+                            descobrir novas receitas.
+                        </li>
+                        <li>
+                            Integração com o Google Maps para encontrar mercados próximos.
+                        </li>
+                        <li>Sugestões diárias de pratos para suas aventuras culinárias.</li>
                     </ul>
                 </div>
             </div>

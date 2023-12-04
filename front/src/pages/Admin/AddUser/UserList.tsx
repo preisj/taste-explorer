@@ -75,7 +75,7 @@ export const UserList: React.FunctionComponent<UserTableProps> = (props) => {
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "book-list.csv");
+        link.setAttribute("download", "user-list.csv");
         document.body.appendChild(link);
         link.click();
     };
